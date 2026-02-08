@@ -18,9 +18,10 @@ import { categories, companyInfo } from "@/constants/data";
 
 const { width } = Dimensions.get("window");
 
-function StatCard({ value, label }: { value: string; label: string }) {
+function StatCard({ value, label, icon }: { value: string; label: string; icon: string }) {
   return (
     <View style={styles.statCard}>
+      <Ionicons name={icon as any} size={18} color={Colors.accent} style={{ marginBottom: 4 }} />
       <Text style={styles.statValue}>{value}</Text>
       <Text style={styles.statLabel}>{label}</Text>
     </View>
@@ -34,7 +35,7 @@ function CategoryCard({ item, onPress }: { item: typeof categories[0]; onPress: 
       onPress={onPress}
     >
       <View style={styles.categoryIconContainer}>
-        <Ionicons name={item.icon as any} size={28} color={Colors.accent} />
+        <Ionicons name={item.icon as any} size={26} color={Colors.accent} />
       </View>
       <Text style={styles.categoryName} numberOfLines={2}>{item.name}</Text>
       <Text style={styles.categoryDesc} numberOfLines={2}>{item.description}</Text>
@@ -76,35 +77,35 @@ export default function HomeScreen() {
       contentInsetAdjustmentBehavior="automatic"
     >
       <LinearGradient
-        colors={[Colors.primary, Colors.primaryLight, '#1E3A5F']}
+        colors={[Colors.primary, Colors.primaryLight, '#2A6B4A']}
         style={[styles.heroSection, { paddingTop: insets.top + webTopInset + 20 }]}
       >
         <View style={styles.heroTopRow}>
           <View style={styles.logoBadge}>
-            <Ionicons name="scale" size={20} color={Colors.accent} />
+            <Ionicons name="leaf" size={18} color={Colors.accent} />
           </View>
-          <Text style={styles.heroCompanyName}>PROMETALICOS</Text>
+          <Text style={styles.heroCompanyName}>SOFTGAN</Text>
         </View>
-        <Text style={styles.heroTitle}>Expertos en{'\n'}Pesaje y Control</Text>
+        <Text style={styles.heroTitle}>Soluciones para{'\n'}el Campo</Text>
         <Text style={styles.heroSubtitle}>
-          Mas de 50 años diseñando y fabricando soluciones de pesaje industrial en Colombia
+          Industria carnica, lactea y ganadera. Basculas, bretes, ordeños y mucho mas
         </Text>
         <View style={styles.heroStatsRow}>
-          <StatCard value="50+" label="Años" />
-          <StatCard value="ISO" label="Certificados" />
-          <StatCard value="ONAC" label="Acreditados" />
+          <StatCard value={companyInfo.stats.clients} label="Clientes" icon="people" />
+          <StatCard value={companyInfo.stats.projects} label="Proyectos" icon="checkmark-done" />
+          <StatCard value="36" label="Meses Gtia" icon="shield-checkmark" />
         </View>
       </LinearGradient>
 
       <View style={styles.quickActionsContainer}>
         <QuickActionButton
-          icon="call"
-          label="Llamar"
+          icon="logo-whatsapp"
+          label="WhatsApp"
           onPress={() => router.push("/(tabs)/contact")}
         />
         <QuickActionButton
-          icon="chatbubble-ellipses"
-          label="WhatsApp"
+          icon="call"
+          label="Llamar"
           onPress={() => router.push("/(tabs)/contact")}
         />
         <QuickActionButton
@@ -114,7 +115,7 @@ export default function HomeScreen() {
         />
         <QuickActionButton
           icon="cube"
-          label="Tienda"
+          label="Productos"
           onPress={() => router.push("/(tabs)/products")}
         />
       </View>
@@ -166,24 +167,42 @@ export default function HomeScreen() {
           <View style={styles.ctaContent}>
             <View style={{ flex: 1 }}>
               <Text style={styles.ctaTitle}>Solicite una Cotizacion</Text>
-              <Text style={styles.ctaSubtitle}>Nuestros asesores le ayudaran a encontrar la solucion ideal</Text>
+              <Text style={styles.ctaSubtitle}>Nuestra asesora Carolina le atendera por WhatsApp</Text>
             </View>
             <View style={styles.ctaIconContainer}>
-              <Ionicons name="arrow-forward" size={24} color={Colors.primary} />
+              <Ionicons name="logo-whatsapp" size={24} color={Colors.primary} />
             </View>
           </View>
         </LinearGradient>
       </Pressable>
 
-      <View style={styles.certSection}>
-        <Text style={styles.certTitle}>Certificaciones</Text>
-        <View style={styles.certGrid}>
-          {companyInfo.certifications.slice(0, 4).map((cert, idx) => (
-            <View key={idx} style={styles.certBadge}>
-              <Ionicons name="shield-checkmark" size={18} color={Colors.success} />
-              <Text style={styles.certText}>{cert}</Text>
+      <View style={styles.advantagesSection}>
+        <Text style={styles.advantagesTitle}>Por que Elegirnos</Text>
+        {companyInfo.advantages.slice(0, 4).map((adv, idx) => (
+          <View key={idx} style={styles.advantageRow}>
+            <View style={styles.advantageCheck}>
+              <Ionicons name="checkmark" size={14} color={Colors.white} />
             </View>
-          ))}
+            <Text style={styles.advantageText}>{adv}</Text>
+          </View>
+        ))}
+      </View>
+
+      <View style={styles.socialSection}>
+        <Text style={styles.socialTitle}>Siguenos en Redes</Text>
+        <View style={styles.socialRow}>
+          <Pressable style={[styles.socialBtn, { backgroundColor: '#1877F2' }]}>
+            <Ionicons name="logo-facebook" size={22} color={Colors.white} />
+          </Pressable>
+          <Pressable style={[styles.socialBtn, { backgroundColor: '#E4405F' }]}>
+            <Ionicons name="logo-instagram" size={22} color={Colors.white} />
+          </Pressable>
+          <Pressable style={[styles.socialBtn, { backgroundColor: '#FF0000' }]}>
+            <Ionicons name="logo-youtube" size={22} color={Colors.white} />
+          </Pressable>
+          <Pressable style={[styles.socialBtn, { backgroundColor: Colors.whatsapp }]}>
+            <Ionicons name="logo-whatsapp" size={22} color={Colors.white} />
+          </Pressable>
         </View>
       </View>
     </ScrollView>
@@ -215,9 +234,9 @@ const styles = StyleSheet.create({
   },
   heroCompanyName: {
     fontFamily: "Inter_700Bold",
-    fontSize: 16,
+    fontSize: 18,
     color: Colors.accent,
-    letterSpacing: 3,
+    letterSpacing: 4,
   },
   heroTitle: {
     fontFamily: "Inter_700Bold",
@@ -241,19 +260,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 14,
-    padding: 14,
+    padding: 12,
     alignItems: "center",
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.08)",
   },
   statValue: {
     fontFamily: "Inter_700Bold",
-    fontSize: 22,
+    fontSize: 20,
     color: Colors.accent,
   },
   statLabel: {
     fontFamily: "Inter_400Regular",
-    fontSize: 12,
+    fontSize: 11,
     color: "rgba(255,255,255,0.6)",
     marginTop: 2,
   },
@@ -381,7 +400,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: Colors.accent,
+    backgroundColor: Colors.green,
   },
   sectorText: {
     fontFamily: "Inter_400Regular",
@@ -411,34 +430,32 @@ const styles = StyleSheet.create({
   ctaSubtitle: {
     fontFamily: "Inter_400Regular",
     fontSize: 13,
-    color: "rgba(10, 22, 40, 0.7)",
+    color: "rgba(27, 58, 45, 0.7)",
     lineHeight: 18,
   },
   ctaIconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "rgba(10, 22, 40, 0.1)",
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(27, 58, 45, 0.1)",
     alignItems: "center",
     justifyContent: "center",
   },
-  certSection: {
+  advantagesSection: {
     marginHorizontal: 20,
     marginBottom: 24,
   },
-  certTitle: {
+  advantagesTitle: {
     fontFamily: "Inter_700Bold",
     fontSize: 18,
     color: Colors.text,
     marginBottom: 14,
   },
-  certGrid: {
-    gap: 10,
-  },
-  certBadge: {
+  advantageRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 12,
+    marginBottom: 10,
     backgroundColor: Colors.cardBg,
     padding: 14,
     borderRadius: 12,
@@ -448,9 +465,44 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 1,
   },
-  certText: {
-    fontFamily: "Inter_600SemiBold",
-    fontSize: 13,
+  advantageCheck: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: Colors.green,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  advantageText: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 14,
     color: Colors.text,
+    flex: 1,
+  },
+  socialSection: {
+    marginHorizontal: 20,
+    marginBottom: 24,
+  },
+  socialTitle: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 18,
+    color: Colors.text,
+    marginBottom: 14,
+  },
+  socialRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  socialBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 3,
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,28 +15,19 @@ import { useFonts, Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from "@e
 import Colors from "@/constants/colors";
 import { categories, products, type Product } from "@/constants/data";
 
-const categoryIcons: Record<string, string> = {
-  'industriales': 'cube',
-  'ganaderas': 'leaf',
-  'camioneras': 'car',
-  'dinamometros': 'fitness',
-  'perifericos': 'settings',
-  'software': 'desktop',
-};
-
-function CategoryPill({ id, name, selected, onPress }: { id: string; name: string; selected: boolean; onPress: () => void }) {
+function CategoryPill({ id, name, icon, selected, onPress }: { id: string; name: string; icon: string; selected: boolean; onPress: () => void }) {
   return (
     <Pressable
       style={[styles.pill, selected && styles.pillSelected]}
       onPress={onPress}
     >
       <Ionicons
-        name={(selected ? categoryIcons[id] : categoryIcons[id] + '-outline') as any}
+        name={(selected ? icon.replace('-outline', '') : icon) as any}
         size={16}
         color={selected ? Colors.white : Colors.darkGray}
       />
-      <Text style={[styles.pillText, selected && styles.pillTextSelected]}>
-        {name.replace('Basculas ', '')}
+      <Text style={[styles.pillText, selected && styles.pillTextSelected]} numberOfLines={1}>
+        {name.replace('Basculas ', '').replace('Equipos de ', '').replace('Equipo ', '').replace('Maquinaria para ', '')}
       </Text>
     </Pressable>
   );
@@ -50,9 +41,9 @@ function ProductCard({ item }: { item: Product }) {
     >
       <View style={styles.productImageContainer}>
         <Ionicons
-          name={(categoryIcons[item.categoryId] || 'cube') as any}
-          size={36}
-          color={Colors.accent}
+          name={item.icon as any}
+          size={32}
+          color={Colors.green}
         />
       </View>
       <View style={styles.productInfo}>
@@ -81,6 +72,12 @@ export default function ProductsScreen() {
   const [searchText, setSearchText] = useState('');
   const [fontsLoaded] = useFonts({ Inter_400Regular, Inter_600SemiBold, Inter_700Bold });
 
+  useEffect(() => {
+    if (params.category) {
+      setSelectedCategory(params.category);
+    }
+  }, [params.category]);
+
   if (!fontsLoaded) return null;
 
   const webTopInset = Platform.OS === "web" ? 67 : 0;
@@ -89,28 +86,36 @@ export default function ProductsScreen() {
     const matchesCategory = selectedCategory === 'all' || p.categoryId === selectedCategory;
     const matchesSearch = searchText === '' ||
       p.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchText.toLowerCase());
+      p.category.toLowerCase().includes(searchText.toLowerCase()) ||
+      p.description.toLowerCase().includes(searchText.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
   return (
     <View style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + webTopInset + 12 }]}>
-        <Text style={styles.headerTitle}>Productos</Text>
-        <Text style={styles.headerSubtitle}>{filteredProducts.length} productos disponibles</Text>
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.headerTitle}>Productos</Text>
+            <Text style={styles.headerSubtitle}>{filteredProducts.length} productos disponibles</Text>
+          </View>
+          <View style={styles.headerBadge}>
+            <Ionicons name="leaf" size={18} color={Colors.accent} />
+          </View>
+        </View>
 
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={18} color={Colors.mediumGray} />
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar productos..."
-            placeholderTextColor={Colors.mediumGray}
+            placeholderTextColor="rgba(255,255,255,0.4)"
             value={searchText}
             onChangeText={setSearchText}
           />
           {searchText.length > 0 && (
             <Pressable onPress={() => setSearchText('')}>
-              <Ionicons name="close-circle" size={18} color={Colors.mediumGray} />
+              <Ionicons name="close-circle" size={18} color="rgba(255,255,255,0.5)" />
             </Pressable>
           )}
         </View>
@@ -120,13 +125,14 @@ export default function ProductsScreen() {
         <FlatList
           horizontal
           showsHorizontalScrollIndicator={false}
-          data={[{ id: 'all', name: 'Todos' }, ...categories]}
+          data={[{ id: 'all', name: 'Todos', icon: 'apps-outline', description: '', productCount: 0 }, ...categories]}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.categoriesList}
           renderItem={({ item }) => (
             <CategoryPill
               id={item.id}
               name={item.name}
+              icon={item.icon}
               selected={selectedCategory === item.id}
               onPress={() => setSelectedCategory(item.id)}
             />
@@ -162,6 +168,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 16,
   },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 16,
+  },
   headerTitle: {
     fontFamily: "Inter_700Bold",
     fontSize: 28,
@@ -172,7 +184,14 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_400Regular",
     fontSize: 14,
     color: "rgba(255,255,255,0.6)",
-    marginBottom: 16,
+  },
+  headerBadge: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "rgba(232, 166, 35, 0.15)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   searchContainer: {
     flexDirection: "row",
@@ -239,10 +258,10 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   productImageContainer: {
-    width: 64,
-    height: 64,
+    width: 60,
+    height: 60,
     borderRadius: 14,
-    backgroundColor: "rgba(232, 166, 35, 0.08)",
+    backgroundColor: "rgba(39, 174, 96, 0.08)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -252,7 +271,7 @@ const styles = StyleSheet.create({
   productCategory: {
     fontFamily: "Inter_600SemiBold",
     fontSize: 11,
-    color: Colors.accent,
+    color: Colors.green,
     textTransform: "uppercase" as const,
     letterSpacing: 0.5,
     marginBottom: 2,

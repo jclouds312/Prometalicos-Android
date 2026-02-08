@@ -20,7 +20,7 @@ function ServiceCard({ service }: { service: typeof services[0] }) {
     <View style={styles.serviceCard}>
       <View style={styles.serviceHeader}>
         <View style={styles.serviceIconContainer}>
-          <Ionicons name={service.icon as any} size={26} color={Colors.accent} />
+          <Ionicons name={service.icon as any} size={26} color={Colors.green} />
         </View>
         <Text style={styles.serviceName}>{service.name}</Text>
       </View>
@@ -28,7 +28,7 @@ function ServiceCard({ service }: { service: typeof services[0] }) {
       <View style={styles.serviceDetails}>
         {service.details.map((detail, idx) => (
           <View key={idx} style={styles.detailRow}>
-            <Ionicons name="checkmark-circle" size={16} color={Colors.success} />
+            <Ionicons name="checkmark-circle" size={16} color={Colors.green} />
             <Text style={styles.detailText}>{detail}</Text>
           </View>
         ))}
@@ -67,11 +67,35 @@ export default function ServicesScreen() {
         colors={[Colors.primary, Colors.primaryLight]}
         style={[styles.header, { paddingTop: insets.top + webTopInset + 16 }]}
       >
-        <Text style={styles.headerTitle}>Servicios</Text>
-        <Text style={styles.headerSubtitle}>
-          Soluciones integrales en pesaje, metrologia y soporte tecnico
-        </Text>
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.headerTitle}>Servicios</Text>
+            <Text style={styles.headerSubtitle}>
+              Soluciones integrales para su operacion
+            </Text>
+          </View>
+          <View style={styles.headerBadge}>
+            <Ionicons name="construct" size={18} color={Colors.accent} />
+          </View>
+        </View>
       </LinearGradient>
+
+      <View style={styles.statsRow}>
+        <View style={styles.statItem}>
+          <Text style={styles.statNumber}>{companyInfo.stats.maintenances}</Text>
+          <Text style={styles.statLabel}>Mantenimientos</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statItem}>
+          <Text style={styles.statNumber}>{companyInfo.stats.consultations}</Text>
+          <Text style={styles.statLabel}>Asesorias</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statItem}>
+          <Text style={styles.statNumber}>{companyInfo.stats.projects}</Text>
+          <Text style={styles.statLabel}>Proyectos</Text>
+        </View>
+      </View>
 
       <View style={styles.servicesContainer}>
         {services.map((service) => (
@@ -80,17 +104,17 @@ export default function ServicesScreen() {
       </View>
 
       <View style={styles.aboutSection}>
-        <Text style={styles.aboutSectionTitle}>Sobre Prometalicos</Text>
+        <Text style={styles.aboutSectionTitle}>Sobre SOFTGAN</Text>
         <Text style={styles.aboutText}>
-          Con mas de 50 años de experiencia, Prometalicos S.A. es lider en el diseño, fabricacion y comercializacion de soluciones de pesaje y control industrial en Colombia.
+          SOFTGAN ofrece soluciones integrales para la industria carnica, lactea y ganadera. Desde basculas ganaderas y camioneras hasta equipos de ordeño, esterilizacion y cuartos frios.
         </Text>
         <Text style={styles.aboutText}>
-          Contamos con el primer laboratorio de metrologia industrial acreditado por ONAC en Colombia, certificado bajo la norma ISO/IEC 17025:2017.
+          Contamos con un equipo tecnico especializado y ofrecemos garantia de 36 meses por defectos de fabricacion en todos nuestros equipos, con disponibilidad de repuestos de por vida.
         </Text>
       </View>
 
       <View style={styles.advantagesSection}>
-        <Text style={styles.advantagesSectionTitle}>Por que Elegirnos</Text>
+        <Text style={styles.advantagesSectionTitle}>Nuestras Ventajas</Text>
         {companyInfo.advantages.map((adv, idx) => (
           <AdvantageItem key={idx} text={adv} index={idx} />
         ))}
@@ -106,10 +130,10 @@ export default function ServicesScreen() {
           end={{ x: 1, y: 0 }}
           style={styles.contactCtaGradient}
         >
-          <Ionicons name="chatbubbles" size={24} color={Colors.primary} />
+          <Ionicons name="logo-whatsapp" size={24} color={Colors.primary} />
           <View style={{ flex: 1 }}>
-            <Text style={styles.contactCtaTitle}>Necesita Asesoria?</Text>
-            <Text style={styles.contactCtaSubtitle}>Contacte a nuestros expertos</Text>
+            <Text style={styles.contactCtaTitle}>Necesita un Servicio?</Text>
+            <Text style={styles.contactCtaSubtitle}>Escriba a nuestra asesora Carolina</Text>
           </View>
           <Ionicons name="arrow-forward" size={20} color={Colors.primary} />
         </LinearGradient>
@@ -127,6 +151,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 24,
   },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
   headerTitle: {
     fontFamily: "Inter_700Bold",
     fontSize: 28,
@@ -139,9 +168,52 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.6)",
     lineHeight: 20,
   },
+  headerBadge: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    backgroundColor: "rgba(232, 166, 35, 0.15)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  statsRow: {
+    flexDirection: "row",
+    marginHorizontal: 20,
+    marginTop: -14,
+    backgroundColor: Colors.cardBg,
+    borderRadius: 16,
+    padding: 18,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 4,
+    marginBottom: 20,
+  },
+  statItem: {
+    flex: 1,
+    alignItems: "center",
+  },
+  statNumber: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 20,
+    color: Colors.green,
+  },
+  statLabel: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 11,
+    color: Colors.textSecondary,
+    marginTop: 2,
+  },
+  statDivider: {
+    width: 1,
+    backgroundColor: Colors.lightGray,
+    marginVertical: 4,
+  },
   servicesContainer: {
-    padding: 20,
+    paddingHorizontal: 20,
     gap: 16,
+    marginBottom: 24,
   },
   serviceCard: {
     backgroundColor: Colors.cardBg,
@@ -163,7 +235,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 14,
-    backgroundColor: "rgba(232, 166, 35, 0.1)",
+    backgroundColor: "rgba(39, 174, 96, 0.1)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -277,6 +349,6 @@ const styles = StyleSheet.create({
   contactCtaSubtitle: {
     fontFamily: "Inter_400Regular",
     fontSize: 13,
-    color: "rgba(10, 22, 40, 0.6)",
+    color: "rgba(27, 58, 45, 0.6)",
   },
 });

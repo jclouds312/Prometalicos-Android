@@ -17,15 +17,6 @@ import { useFonts, Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from "@e
 import Colors from "@/constants/colors";
 import { products, companyInfo } from "@/constants/data";
 
-const categoryIcons: Record<string, string> = {
-  'industriales': 'cube',
-  'ganaderas': 'leaf',
-  'camioneras': 'car',
-  'dinamometros': 'fitness',
-  'perifericos': 'settings',
-  'software': 'desktop',
-};
-
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
@@ -49,13 +40,11 @@ export default function ProductDetailScreen() {
     );
   }
 
-  const iconName = categoryIcons[product.categoryId] || 'cube';
-
   const handleQuote = () => {
     if (Platform.OS !== 'web') {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
-    const text = encodeURIComponent(`Hola, me gustaria recibir cotizacion del producto: ${product.name}`);
+    const text = encodeURIComponent(`Hola Carolina, me gustaria recibir cotizacion del producto: ${product.name}\n\nCategoria: ${product.category}`);
     Linking.openURL(`https://wa.me/${companyInfo.whatsapp.replace('+', '')}?text=${text}`);
   };
 
@@ -65,6 +54,10 @@ export default function ProductDetailScreen() {
     Linking.openURL(`mailto:${companyInfo.email}?subject=${subject}&body=${body}`);
   };
 
+  const handleCall = () => {
+    Linking.openURL(`tel:${companyInfo.phone.replace(/\s/g, '')}`);
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -72,7 +65,7 @@ export default function ProductDetailScreen() {
         showsVerticalScrollIndicator={false}
       >
         <LinearGradient
-          colors={[Colors.primary, Colors.primaryLight, '#1E3A5F']}
+          colors={[Colors.primary, Colors.primaryLight, '#2A6B4A']}
           style={[styles.heroSection, { paddingTop: insets.top + webTopInset + 12 }]}
         >
           <Pressable style={styles.backBtn} onPress={() => router.back()}>
@@ -80,11 +73,16 @@ export default function ProductDetailScreen() {
           </Pressable>
 
           <View style={styles.heroIconContainer}>
-            <Ionicons name={iconName as any} size={64} color={Colors.accent} />
+            <Ionicons name={product.icon as any} size={56} color={Colors.accent} />
           </View>
           <Text style={styles.heroCategory}>{product.category}</Text>
           <Text style={styles.heroTitle}>{product.name}</Text>
         </LinearGradient>
+
+        <View style={styles.guaranteeBanner}>
+          <Ionicons name="shield-checkmark" size={18} color={Colors.green} />
+          <Text style={styles.guaranteeText}>Garantia 36 meses por defectos de fabricacion</Text>
+        </View>
 
         <View style={styles.contentSection}>
           <Text style={styles.descTitle}>Descripcion</Text>
@@ -92,7 +90,7 @@ export default function ProductDetailScreen() {
         </View>
 
         <View style={styles.contentSection}>
-          <Text style={styles.descTitle}>Especificaciones</Text>
+          <Text style={styles.descTitle}>Especificaciones Tecnicas</Text>
           <View style={styles.specsGrid}>
             {product.specs.map((spec, idx) => {
               const parts = spec.split(': ');
@@ -118,13 +116,29 @@ export default function ProductDetailScreen() {
           ))}
         </View>
 
-        <View style={styles.certRow}>
-          <Ionicons name="shield-checkmark" size={18} color={Colors.success} />
-          <Text style={styles.certRowText}>Fabricado bajo normas ISO 9001, OIML, NTC 2031 y CE</Text>
+        <View style={styles.extraInfoSection}>
+          <View style={styles.extraInfoRow}>
+            <Ionicons name="construct" size={18} color={Colors.accent} />
+            <Text style={styles.extraInfoText}>Disponibilidad de repuestos (Life Warranty)</Text>
+          </View>
+          <View style={styles.extraInfoRow}>
+            <Ionicons name="airplane" size={18} color={Colors.accent} />
+            <Text style={styles.extraInfoText}>Despacho a todo Colombia</Text>
+          </View>
+          <View style={styles.extraInfoRow}>
+            <Ionicons name="school" size={18} color={Colors.accent} />
+            <Text style={styles.extraInfoText}>Asesoria tecnica incluida</Text>
+          </View>
         </View>
       </ScrollView>
 
       <View style={[styles.bottomBar, { paddingBottom: Math.max(insets.bottom, 16) + (Platform.OS === 'web' ? 34 : 0) }]}>
+        <Pressable
+          style={({ pressed }) => [styles.callBtn, { opacity: pressed ? 0.85 : 1 }]}
+          onPress={handleCall}
+        >
+          <Ionicons name="call" size={20} color={Colors.primary} />
+        </Pressable>
         <Pressable
           style={({ pressed }) => [styles.emailBtn, { opacity: pressed ? 0.85 : 1 }]}
           onPress={handleEmailQuote}
@@ -136,13 +150,13 @@ export default function ProductDetailScreen() {
           onPress={handleQuote}
         >
           <LinearGradient
-            colors={[Colors.accent, Colors.accentLight]}
+            colors={[Colors.whatsapp, '#20BD57']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.quoteBtnGradient}
           >
-            <Ionicons name="logo-whatsapp" size={20} color={Colors.primary} />
-            <Text style={styles.quoteBtnText}>Solicitar Cotizacion</Text>
+            <Ionicons name="logo-whatsapp" size={20} color={Colors.white} />
+            <Text style={styles.quoteBtnText}>Cotizar Ahora</Text>
           </LinearGradient>
         </Pressable>
       </View>
@@ -171,9 +185,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   heroIconContainer: {
-    width: 110,
-    height: 110,
-    borderRadius: 28,
+    width: 100,
+    height: 100,
+    borderRadius: 26,
     backgroundColor: "rgba(232, 166, 35, 0.12)",
     alignItems: "center",
     justifyContent: "center",
@@ -191,14 +205,33 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     fontFamily: "Inter_700Bold",
-    fontSize: 24,
+    fontSize: 22,
     color: Colors.white,
     textAlign: "center",
-    lineHeight: 30,
+    lineHeight: 28,
+  },
+  guaranteeBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginHorizontal: 20,
+    marginTop: -14,
+    backgroundColor: "rgba(39, 174, 96, 0.08)",
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "rgba(39, 174, 96, 0.15)",
+    marginBottom: 8,
+  },
+  guaranteeText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 13,
+    color: Colors.green,
+    flex: 1,
   },
   contentSection: {
     paddingHorizontal: 20,
-    marginTop: 24,
+    marginTop: 20,
   },
   descTitle: {
     fontFamily: "Inter_700Bold",
@@ -251,7 +284,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: Colors.accent,
+    backgroundColor: Colors.green,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -261,20 +294,23 @@ const styles = StyleSheet.create({
     color: Colors.text,
     flex: 1,
   },
-  certRow: {
+  extraInfoSection: {
+    marginHorizontal: 20,
+    marginTop: 20,
+    backgroundColor: Colors.primary,
+    borderRadius: 16,
+    padding: 18,
+    gap: 14,
+  },
+  extraInfoRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
-    marginHorizontal: 20,
-    marginTop: 24,
-    backgroundColor: "rgba(34, 197, 94, 0.08)",
-    padding: 14,
-    borderRadius: 12,
+    gap: 12,
   },
-  certRowText: {
+  extraInfoText: {
     fontFamily: "Inter_400Regular",
-    fontSize: 13,
-    color: Colors.text,
+    fontSize: 14,
+    color: "rgba(255,255,255,0.8)",
     flex: 1,
   },
   bottomBar: {
@@ -289,6 +325,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderTopWidth: 1,
     borderTopColor: Colors.lightGray,
+  },
+  callBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    borderWidth: 2,
+    borderColor: Colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
   },
   emailBtn: {
     width: 52,
@@ -314,7 +359,7 @@ const styles = StyleSheet.create({
   quoteBtnText: {
     fontFamily: "Inter_700Bold",
     fontSize: 16,
-    color: Colors.primary,
+    color: Colors.white,
   },
   notFoundText: {
     fontFamily: "Inter_600SemiBold",

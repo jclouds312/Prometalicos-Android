@@ -18,7 +18,7 @@ import { useFonts, Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from "@e
 import Colors from "@/constants/colors";
 import { companyInfo } from "@/constants/data";
 
-type RequestType = 'cotizacion' | 'info_tecnica' | 'envio';
+type RequestType = 'cotizacion' | 'info_tecnica' | 'servicio' | 'repuestos';
 
 function ContactInfoCard({ icon, label, value, onPress }: { icon: string; label: string; value: string; onPress?: () => void }) {
   return (
@@ -28,7 +28,7 @@ function ContactInfoCard({ icon, label, value, onPress }: { icon: string; label:
       disabled={!onPress}
     >
       <View style={styles.contactInfoIcon}>
-        <Ionicons name={icon as any} size={20} color={Colors.accent} />
+        <Ionicons name={icon as any} size={20} color={Colors.green} />
       </View>
       <View style={styles.contactInfoText}>
         <Text style={styles.contactInfoLabel}>{label}</Text>
@@ -56,17 +56,25 @@ export default function ContactScreen() {
   const requestTypes: { key: RequestType; label: string; icon: string }[] = [
     { key: 'cotizacion', label: 'Cotizacion', icon: 'pricetag' },
     { key: 'info_tecnica', label: 'Info Tecnica', icon: 'information-circle' },
-    { key: 'envio', label: 'Costos Envio', icon: 'airplane' },
+    { key: 'servicio', label: 'Servicio', icon: 'construct' },
+    { key: 'repuestos', label: 'Repuestos', icon: 'settings' },
   ];
 
   const handleSubmit = () => {
-    if (!name.trim() || !email.trim() || !message.trim()) {
-      Alert.alert('Campos requeridos', 'Por favor complete nombre, email y mensaje.');
+    if (!name.trim() || !message.trim()) {
+      Alert.alert('Campos requeridos', 'Por favor complete nombre y mensaje.');
       return;
     }
     if (Platform.OS !== 'web') {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
+
+    const typeLabel = requestTypes.find(t => t.key === requestType)?.label || 'Cotizacion';
+    const whatsappMsg = encodeURIComponent(
+      `Hola Carolina, soy ${name.trim()}.\n\nTipo de solicitud: ${typeLabel}\n${email ? `Email: ${email}\n` : ''}${phone ? `Tel: ${phone}\n` : ''}\n${message.trim()}`
+    );
+    Linking.openURL(`https://wa.me/${companyInfo.whatsapp.replace('+', '')}?text=${whatsappMsg}`);
+
     setSubmitted(true);
   };
 
@@ -79,12 +87,24 @@ export default function ContactScreen() {
   };
 
   const handleWhatsApp = () => {
-    const text = encodeURIComponent('Hola, me gustaria recibir informacion sobre sus productos de pesaje.');
+    const text = encodeURIComponent('Hola Carolina, me gustaria recibir informacion sobre sus productos.');
     Linking.openURL(`https://wa.me/${companyInfo.whatsapp.replace('+', '')}?text=${text}`);
   };
 
   const handleWebsite = () => {
     Linking.openURL(`https://${companyInfo.website}`);
+  };
+
+  const handleFacebook = () => {
+    Linking.openURL(`https://www.facebook.com/${companyInfo.facebook}`);
+  };
+
+  const handleInstagram = () => {
+    Linking.openURL(`https://www.instagram.com/${companyInfo.instagram}/`);
+  };
+
+  const handleYoutube = () => {
+    Linking.openURL(`https://www.youtube.com/@${companyInfo.youtube}`);
   };
 
   const resetForm = () => {
@@ -109,28 +129,28 @@ export default function ContactScreen() {
       >
         <Text style={styles.headerTitle}>Contacto</Text>
         <Text style={styles.headerSubtitle}>
-          Estamos listos para atender su solicitud
+          Nuestra asesora Carolina esta lista para atenderle
         </Text>
       </LinearGradient>
 
       <View style={styles.quickContactRow}>
         <Pressable
           style={({ pressed }) => [styles.quickContactBtn, { opacity: pressed ? 0.85 : 1 }]}
-          onPress={handleCall}
-        >
-          <View style={[styles.quickContactIcon, { backgroundColor: 'rgba(34, 197, 94, 0.12)' }]}>
-            <Ionicons name="call" size={22} color={Colors.success} />
-          </View>
-          <Text style={styles.quickContactLabel}>Llamar</Text>
-        </Pressable>
-        <Pressable
-          style={({ pressed }) => [styles.quickContactBtn, { opacity: pressed ? 0.85 : 1 }]}
           onPress={handleWhatsApp}
         >
           <View style={[styles.quickContactIcon, { backgroundColor: 'rgba(37, 211, 102, 0.12)' }]}>
-            <Ionicons name="logo-whatsapp" size={22} color="#25D366" />
+            <Ionicons name="logo-whatsapp" size={22} color={Colors.whatsapp} />
           </View>
           <Text style={styles.quickContactLabel}>WhatsApp</Text>
+        </Pressable>
+        <Pressable
+          style={({ pressed }) => [styles.quickContactBtn, { opacity: pressed ? 0.85 : 1 }]}
+          onPress={handleCall}
+        >
+          <View style={[styles.quickContactIcon, { backgroundColor: 'rgba(39, 174, 96, 0.12)' }]}>
+            <Ionicons name="call" size={22} color={Colors.green} />
+          </View>
+          <Text style={styles.quickContactLabel}>Llamar</Text>
         </Pressable>
         <Pressable
           style={({ pressed }) => [styles.quickContactBtn, { opacity: pressed ? 0.85 : 1 }]}
@@ -145,21 +165,36 @@ export default function ContactScreen() {
           style={({ pressed }) => [styles.quickContactBtn, { opacity: pressed ? 0.85 : 1 }]}
           onPress={handleWebsite}
         >
-          <View style={[styles.quickContactIcon, { backgroundColor: 'rgba(10, 22, 40, 0.08)' }]}>
+          <View style={[styles.quickContactIcon, { backgroundColor: 'rgba(27, 58, 45, 0.08)' }]}>
             <Ionicons name="globe" size={22} color={Colors.primary} />
           </View>
           <Text style={styles.quickContactLabel}>Web</Text>
         </Pressable>
       </View>
 
+      <View style={styles.socialRow}>
+        <Pressable style={({ pressed }) => [styles.socialBtn, { backgroundColor: '#1877F2', opacity: pressed ? 0.85 : 1 }]} onPress={handleFacebook}>
+          <Ionicons name="logo-facebook" size={20} color={Colors.white} />
+          <Text style={styles.socialBtnText}>Facebook</Text>
+        </Pressable>
+        <Pressable style={({ pressed }) => [styles.socialBtn, { backgroundColor: '#E4405F', opacity: pressed ? 0.85 : 1 }]} onPress={handleInstagram}>
+          <Ionicons name="logo-instagram" size={20} color={Colors.white} />
+          <Text style={styles.socialBtnText}>Instagram</Text>
+        </Pressable>
+        <Pressable style={({ pressed }) => [styles.socialBtn, { backgroundColor: '#FF0000', opacity: pressed ? 0.85 : 1 }]} onPress={handleYoutube}>
+          <Ionicons name="logo-youtube" size={20} color={Colors.white} />
+          <Text style={styles.socialBtnText}>YouTube</Text>
+        </Pressable>
+      </View>
+
       {submitted ? (
         <View style={styles.successContainer}>
           <View style={styles.successIcon}>
-            <Ionicons name="checkmark-circle" size={60} color={Colors.success} />
+            <Ionicons name="checkmark-circle" size={60} color={Colors.green} />
           </View>
-          <Text style={styles.successTitle}>Solicitud Enviada</Text>
+          <Text style={styles.successTitle}>Mensaje Enviado</Text>
           <Text style={styles.successText}>
-            Gracias por contactarnos. Nuestro equipo se pondra en contacto con usted a la mayor brevedad.
+            Su solicitud ha sido enviada por WhatsApp. Carolina se pondra en contacto con usted a la mayor brevedad.
           </Text>
           <Pressable
             style={({ pressed }) => [styles.resetBtn, { opacity: pressed ? 0.85 : 1 }]}
@@ -170,7 +205,8 @@ export default function ContactScreen() {
         </View>
       ) : (
         <View style={styles.formContainer}>
-          <Text style={styles.formTitle}>Solicitar Cotizacion o Asesoria</Text>
+          <Text style={styles.formTitle}>Solicitar Cotizacion o Servicio</Text>
+          <Text style={styles.formSubtitle}>Su mensaje sera enviado directamente por WhatsApp</Text>
 
           <Text style={styles.inputLabel}>Tipo de solicitud</Text>
           <View style={styles.requestTypeRow}>
@@ -182,7 +218,7 @@ export default function ContactScreen() {
               >
                 <Ionicons
                   name={type.icon as any}
-                  size={16}
+                  size={14}
                   color={requestType === type.key ? Colors.white : Colors.darkGray}
                 />
                 <Text style={[styles.requestTypeText, requestType === type.key && styles.requestTypeTextSelected]}>
@@ -201,7 +237,7 @@ export default function ContactScreen() {
             onChangeText={setName}
           />
 
-          <Text style={styles.inputLabel}>Email *</Text>
+          <Text style={styles.inputLabel}>Email</Text>
           <TextInput
             style={styles.input}
             placeholder="correo@ejemplo.com"
@@ -225,7 +261,7 @@ export default function ContactScreen() {
           <Text style={styles.inputLabel}>Mensaje *</Text>
           <TextInput
             style={[styles.input, styles.textArea]}
-            placeholder="Describa su necesidad o el producto que requiere..."
+            placeholder="Describa su necesidad, producto o servicio que requiere..."
             placeholderTextColor={Colors.mediumGray}
             value={message}
             onChangeText={setMessage}
@@ -239,13 +275,13 @@ export default function ContactScreen() {
             onPress={handleSubmit}
           >
             <LinearGradient
-              colors={[Colors.accent, Colors.accentLight]}
+              colors={[Colors.whatsapp, '#20BD57']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.submitGradient}
             >
-              <Ionicons name="send" size={18} color={Colors.primary} />
-              <Text style={styles.submitText}>Enviar Solicitud</Text>
+              <Ionicons name="logo-whatsapp" size={20} color={Colors.white} />
+              <Text style={styles.submitText}>Enviar por WhatsApp</Text>
             </LinearGradient>
           </Pressable>
         </View>
@@ -254,9 +290,10 @@ export default function ContactScreen() {
       <View style={styles.infoSection}>
         <Text style={styles.infoTitle}>Informacion de Contacto</Text>
         <ContactInfoCard
-          icon="location"
-          label="Direccion"
-          value={companyInfo.address}
+          icon="logo-whatsapp"
+          label="WhatsApp"
+          value="316 326 3971"
+          onPress={handleWhatsApp}
         />
         <ContactInfoCard
           icon="call"
@@ -306,7 +343,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     gap: 12,
     marginTop: -12,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   quickContactBtn: {
     flex: 1,
@@ -331,6 +368,26 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Colors.darkGray,
   },
+  socialRow: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    gap: 10,
+    marginBottom: 20,
+  },
+  socialBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  socialBtnText: {
+    fontFamily: "Inter_600SemiBold",
+    fontSize: 12,
+    color: Colors.white,
+  },
   formContainer: {
     marginHorizontal: 20,
     backgroundColor: Colors.cardBg,
@@ -347,6 +404,12 @@ const styles = StyleSheet.create({
     fontFamily: "Inter_700Bold",
     fontSize: 18,
     color: Colors.text,
+    marginBottom: 4,
+  },
+  formSubtitle: {
+    fontFamily: "Inter_400Regular",
+    fontSize: 13,
+    color: Colors.textSecondary,
     marginBottom: 18,
   },
   inputLabel: {
@@ -358,16 +421,17 @@ const styles = StyleSheet.create({
   },
   requestTypeRow: {
     flexDirection: "row",
-    gap: 8,
+    gap: 6,
     marginTop: 4,
+    flexWrap: "wrap",
   },
   requestTypeBtn: {
-    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 4,
-    paddingVertical: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderRadius: 10,
     backgroundColor: Colors.offWhite,
     borderWidth: 1,
@@ -415,7 +479,7 @@ const styles = StyleSheet.create({
   submitText: {
     fontFamily: "Inter_700Bold",
     fontSize: 16,
-    color: Colors.primary,
+    color: Colors.white,
   },
   successContainer: {
     marginHorizontal: 20,
@@ -486,7 +550,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: "rgba(232, 166, 35, 0.1)",
+    backgroundColor: "rgba(39, 174, 96, 0.1)",
     alignItems: "center",
     justifyContent: "center",
   },
