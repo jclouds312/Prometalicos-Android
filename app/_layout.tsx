@@ -6,6 +6,9 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { queryClient } from "@/lib/query-client";
+import { FavoritesProvider } from "@/contexts/FavoritesContext";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import { View, StyleSheet } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,12 +32,21 @@ export default function RootLayout() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <GestureHandlerRootView>
-          <KeyboardProvider>
-            <RootLayoutNav />
-          </KeyboardProvider>
-        </GestureHandlerRootView>
+        <FavoritesProvider>
+          <GestureHandlerRootView style={styles.root}>
+            <KeyboardProvider>
+              <RootLayoutNav />
+              <WhatsAppButton />
+            </KeyboardProvider>
+          </GestureHandlerRootView>
+        </FavoritesProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
+});

@@ -22,6 +22,10 @@ function NativeTabLayout() {
         <Icon sf={{ default: "wrench.and.screwdriver", selected: "wrench.and.screwdriver.fill" }} />
         <Label>Servicios</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="about">
+        <Icon sf={{ default: "info.circle", selected: "info.circle.fill" }} />
+        <Label>Nosotros</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="contact">
         <Icon sf={{ default: "envelope", selected: "envelope.fill" }} />
         <Label>Contacto</Label>
@@ -60,6 +64,9 @@ function ClassicTabLayout() {
           ) : isWeb ? (
             <View style={[StyleSheet.absoluteFill, { backgroundColor: isDark ? "#000" : "#fff" }]} />
           ) : null,
+        tabBarLabelStyle: {
+          fontSize: 10,
+        },
       }}
     >
       <Tabs.Screen
@@ -86,6 +93,15 @@ function ClassicTabLayout() {
           title: "Servicios",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="construct" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="about"
+        options={{
+          title: "Nosotros",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="information-circle" size={size} color={color} />
           ),
         }}
       />
