@@ -1,26 +1,26 @@
 {
   "expo": {
-    "name": "Prometalicos",
-    "slug": "prometalicos",
+    "name": "Softgan",
+    "slug": "softgan",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "prometalicos",
+    "scheme": "softgan",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0A1628"
+      "backgroundColor": "#1B3A2D"
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.prometalicos"
+      "bundleIdentifier": "com.softgan"
     },
     "android": {
-      "package": "com.prometalicos",
+      "package": "com.softgan",
       "adaptiveIcon": {
-        "backgroundColor": "#0A1628",
+        "backgroundColor": "#1B3A2D",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
